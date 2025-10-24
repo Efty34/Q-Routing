@@ -13,6 +13,15 @@ class Router : public cSimpleModule {
     map<long, map<int, double>> qTable;
     int numGates;
     
+    // Track forwarded packets: key = messageId, value = (dest, gate, sendTime)
+    struct PacketInfo {
+        long dest;
+        int gate;
+        double sendTime;
+    };
+    map<long, PacketInfo> pendingPackets;
+    long nextPacketId = 0;
+    
     // Statistics
     simsignal_t qValueSignal;
     
@@ -35,16 +44,17 @@ class Router : public cSimpleModule {
     }
     
     // Update Q-value using Q-learning formula
-    void updateQ(long dest, int gate, double observedDelay, double minNextQ) {
+    void updateQ(long dest, int gate, double measuredDelay) {
         double oldQ = getQ(dest, gate);
-        // Q-learning update: Q(s,a) = Q(s,a) + α * [r + min_Q(s') - Q(s,a)]
-        // Here: r = observedDelay, minNextQ is the best Q at next hop
-        double newQ = oldQ + LEARNING_RATE * (observedDelay + minNextQ - oldQ);
+        // Simplified Q-learning for single router: Q(dest,gate) = oldQ + α * [delay - oldQ]
+        // Since we're at the last hop before destination, minNextQ = 0
+        double newQ = oldQ + LEARNING_RATE * (measuredDelay - oldQ);
         qTable[dest][gate] = newQ;
         
         emit(qValueSignal, newQ);
         EV_INFO << "Router Q-update: dest=" << dest << " gate=" << gate 
-                << " oldQ=" << oldQ << " newQ=" << newQ << "\n";
+                << " oldQ=" << oldQ << " newQ=" << newQ 
+                << " (measured delay=" << measuredDelay << ")\n";
     }
     
     // Select best gate based on Q-values (epsilon-greedy)
@@ -97,39 +107,57 @@ class Router : public cSimpleModule {
         long dst = DST(msg);
         int inGate = msg->getArrivalGate() ? msg->getArrivalGate()->getIndex() : -1;
         
-        // Calculate transmission delay (time since message was sent)
-        double sendTime = msg->par("sendTime").doubleValue();
-        double currentTime = simTime().dbl();
-        double transmissionDelay = currentTime - sendTime;
-        
-        // Handle Q-UPDATE feedback messages
+        // Ignore Q-UPDATE messages (not used in single-router topology)
         if (msg->getKind() == Q_UPDATE) {
-            long qDest = msg->par("dest").longValue();
-            double nextHopMinQ = msg->par("qValue").doubleValue();
-            
-            // Update Q-value based on feedback from next hop
-            if (inGate >= 0) {
-                updateQ(qDest, inGate, transmissionDelay, nextHopMinQ);
-            }
             delete msg;
             return;
         }
         
-        // For data messages, route using Q-table and send feedback
+        // Check if this is a RESPONSE coming back - use it to learn!
+        if (msg->getKind() == DNS_RESPONSE || msg->getKind() == HTTP_RESPONSE) {
+            // This is a response packet - check if we forwarded the original request
+            long responseSrc = SRC(msg);  // Who sent this response (the destination we were routing to)
+            
+            // Look for any pending packet to this destination from this gate
+            for (auto it = pendingPackets.begin(); it != pendingPackets.end(); ) {
+                if (it->second.dest == responseSrc && it->second.gate == inGate) {
+                    // Found it! Calculate round-trip time
+                    double currentTime = simTime().dbl();
+                    double rtt = currentTime - it->second.sendTime;
+                    
+                    // Update Q-value based on measured delay
+                    updateQ(it->second.dest, it->second.gate, rtt);
+                    
+                    // Remove from pending
+                    it = pendingPackets.erase(it);
+                    break;  // Only update once per response
+                } else {
+                    ++it;
+                }
+            }
+            
+            // Forward the response to its destination
+            int outGate = selectGate(dst, inGate);
+            if (outGate >= 0 && outGate < numGates) {
+                EV_INFO << "Router forwarding response to dest=" << dst << " via gate=" << outGate << "\n";
+                send(msg, "pppg$o", outGate);
+            } else {
+                EV_WARN << "Router: no valid gate for response dest=" << dst << ", dropping\n";
+                delete msg;
+            }
+            return;
+        }
+        
+        // For data messages (requests), route using Q-table
         int outGate = selectGate(dst, inGate);
         
         if (outGate >= 0 && outGate < numGates) {
-            // Send Q-UPDATE feedback to previous hop
-            if (inGate >= 0) {
-                double myMinQ = getMinQ(dst);
-                auto *feedback = new cMessage("Q_UPDATE", Q_UPDATE);
-                feedback->addPar("src").setLongValue(0); // Router doesn't have address
-                feedback->addPar("dst").setLongValue(0);
-                feedback->addPar("sendTime").setDoubleValue(simTime().dbl());
-                feedback->addPar("dest").setLongValue(dst);
-                feedback->addPar("qValue").setDoubleValue(myMinQ);
-                send(feedback, "pppg$o", inGate);
-            }
+            // Track this packet so we can learn from the response
+            PacketInfo info;
+            info.dest = dst;
+            info.gate = outGate;
+            info.sendTime = simTime().dbl();
+            pendingPackets[nextPacketId++] = info;
             
             // Forward the message
             EV_INFO << "Router forwarding to dest=" << dst << " via gate=" << outGate 

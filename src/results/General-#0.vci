@@ -1,9 +1,9 @@
-file 606 1761300983                                             
+file 873 1761306841                                             
 version 3
-run General-0-20251024-15:58:40-13464
+run General-0-20251024-17:52:43-18064
 attr configname General
-attr datetime 20251024-15:58:40
-attr datetimef 20251024-155840
+attr datetime 20251024-17:52:43
+attr datetimef 20251024-175243
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
@@ -11,7 +11,7 @@ attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network SimpleNet
-attr processid 13464
+attr processid 18064
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -24,4 +24,5 @@ vector 0 SimpleNet.router qValue:vector ETV
 attr interpolationmode none
 attr recordingmode vector
 attr title Q-values
+0	604 267 4 71 0.5003 18.5003 10 0.0011763671874995 0.5001 1.0008236328125 0.33359962502216
 

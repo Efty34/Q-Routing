@@ -53,7 +53,17 @@ class PC : public cSimpleModule {
             return;
         }
         
-        // Received a response
+        // Check if this packet is actually for us
+        long dst = DST(msg);
+        if (dst != addr) {
+            // Not for us - this is a misrouted packet, drop it
+            EV_WARN << "Node " << addr << " received packet destined for " << dst 
+                    << " (not for us), dropping\n";
+            delete msg;
+            return;
+        }
+        
+        // Received a response destined for us
         packetsReceived++;
         long src = SRC(msg);
         EV_INFO << "Node " << addr << " received response from " << src 
