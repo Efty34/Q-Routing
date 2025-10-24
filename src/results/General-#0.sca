@@ -1,8 +1,8 @@
 version 3
-run General-0-20251024-17:52:43-18064
+run General-0-20251024-17:58:40-16368
 attr configname General
-attr datetime 20251024-17:52:43
-attr datetimef 20251024-175243
+attr datetime 20251024-17:58:40
+attr datetimef 20251024-175840
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
@@ -10,7 +10,7 @@ attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network SimpleNet
-attr processid 18064
+attr processid 16368
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -126,13 +126,13 @@ attr mutable ""
 par SimpleNet.router typename "\"simple_dns_http.Router\""
 par SimpleNet.router routes "\"\""
 statistic SimpleNet.router qValue:stats
-field count 10
-field mean 0.10008236328125
-field stddev 0.16105031326423
-field min 0.0011763671874995
-field max 0.5001
-field sum 1.0008236328125
-field sqrsum 0.33359962502216
+field count 14
+field mean 0.144021484375
+field stddev 0.17221268324714
+field min 0.0041054687499995
+field max 0.5035
+field sum 2.01630078125
+field sqrsum 0.67593433898743
 attr interpolationmode none
 attr recordingmode stats
 attr title Q-values

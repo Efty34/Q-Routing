@@ -1,6 +1,7 @@
 #include <omnetpp.h>
 #include "helpers.h"
 #include <map>
+#include <set>
 #include <sstream>
 #include <vector>
 #include <algorithm>
@@ -21,6 +22,9 @@ class Router : public cSimpleModule {
     };
     map<long, PacketInfo> pendingPackets;
     long nextPacketId = 0;
+    
+    // Track which gates have been tried for each destination (for initial exploration)
+    map<long, set<int>> exploredGates;
     
     // Statistics
     simsignal_t qValueSignal;
@@ -57,7 +61,7 @@ class Router : public cSimpleModule {
                 << " (measured delay=" << measuredDelay << ")\n";
     }
     
-    // Select best gate based on Q-values (epsilon-greedy)
+    // Select best gate based on Q-values (smart exploration + epsilon-greedy)
     int selectGate(long dest, int incomingGate) {
         vector<int> availableGates;
         for (int i = 0; i < numGates; i++) {
@@ -68,10 +72,30 @@ class Router : public cSimpleModule {
         
         if (availableGates.empty()) return -1;
         
-        // Epsilon-greedy: explore vs exploit
+        // PHASE 1: Initial Exploration - try each gate at least once
+        // Check if there are unexplored gates for this destination
+        vector<int> unexploredGates;
+        for (int g : availableGates) {
+            if (exploredGates[dest].find(g) == exploredGates[dest].end()) {
+                unexploredGates.push_back(g);
+            }
+        }
+        
+        if (!unexploredGates.empty()) {
+            // Pick first unexplored gate (systematic exploration)
+            int selectedGate = unexploredGates[0];
+            exploredGates[dest].insert(selectedGate);
+            EV_INFO << "Router: Initial exploration - trying gate " << selectedGate 
+                    << " for dest=" << dest << " (first time)\n";
+            return selectedGate;
+        }
+        
+        // PHASE 2: Epsilon-greedy (after all gates explored once)
         if (uniform(0, 1) < EPSILON) {
             // Exploration: random gate
             int idx = intuniform(0, availableGates.size() - 1);
+            EV_INFO << "Router: Random exploration - gate " << availableGates[idx] 
+                    << " for dest=" << dest << "\n";
             return availableGates[idx];
         }
         
@@ -85,6 +109,8 @@ class Router : public cSimpleModule {
                 bestGate = g;
             }
         }
+        EV_INFO << "Router: Exploitation - best gate " << bestGate 
+                << " for dest=" << dest << " (Q=" << bestQ << ")\n";
         return bestGate;
     }
     
