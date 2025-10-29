@@ -1,8 +1,8 @@
 version 3
-run General-0-20251024-17:58:40-16368
+run General-0-20251030-00:51:19-20568
 attr configname General
-attr datetime 20251024-17:58:40
-attr datetimef 20251024-175840
+attr datetime 20251030-00:51:19
+attr datetimef 20251030-005119
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
@@ -10,151 +10,230 @@ attr iterationvarsd ""
 attr iterationvarsf ""
 attr measurement ""
 attr network SimpleNet
-attr processid 16368
+attr processid 20568
 attr repetition 0
 attr replication #0
 attr resultdir results
 attr runnumber 0
 attr seedset 0
 config network SimpleNet
-config sim-time-limit 20s
+config sim-time-limit 100s
 
-par SimpleNet.node1.ppp$o.channel typename "\"simple_dns_http.FastLink\""
-par SimpleNet.node1.ppp$o.channel disabled false
+par SimpleNet.source.ppp$o[0].channel typename "\"simple_dns_http.Link\""
+par SimpleNet.source.ppp$o[0].channel disabled false
 attr mutable ""
-par SimpleNet.node1.ppp$o.channel delay 0.0001s
-attr mutable ""
-attr unit s
-par SimpleNet.node1.ppp$o.channel datarate 1e+08bps
-attr mutable ""
-attr unit bps
-par SimpleNet.node1.ppp$o.channel ber 0
-attr mutable ""
-par SimpleNet.node1.ppp$o.channel per 0
-attr mutable ""
-par SimpleNet.router.pppg$o[0].channel typename "\"simple_dns_http.FastLink\""
-par SimpleNet.router.pppg$o[0].channel disabled false
-attr mutable ""
-par SimpleNet.router.pppg$o[0].channel delay 0.0001s
+par SimpleNet.source.ppp$o[0].channel delay 0.001s
 attr mutable ""
 attr unit s
-par SimpleNet.router.pppg$o[0].channel datarate 1e+08bps
+par SimpleNet.source.ppp$o[0].channel datarate 1e+08bps
 attr mutable ""
 attr unit bps
-par SimpleNet.router.pppg$o[0].channel ber 0
+par SimpleNet.source.ppp$o[0].channel ber 0
 attr mutable ""
-par SimpleNet.router.pppg$o[0].channel per 0
+par SimpleNet.source.ppp$o[0].channel per 0
 attr mutable ""
-par SimpleNet.node2.ppp$o.channel typename "\"simple_dns_http.FastLink\""
-par SimpleNet.node2.ppp$o.channel disabled false
+par SimpleNet.router1.pppg$o[0].channel typename "\"simple_dns_http.Link\""
+par SimpleNet.router1.pppg$o[0].channel disabled false
 attr mutable ""
-par SimpleNet.node2.ppp$o.channel delay 0.0001s
+par SimpleNet.router1.pppg$o[0].channel delay 0.001s
 attr mutable ""
 attr unit s
-par SimpleNet.node2.ppp$o.channel datarate 1e+08bps
+par SimpleNet.router1.pppg$o[0].channel datarate 1e+08bps
 attr mutable ""
 attr unit bps
-par SimpleNet.node2.ppp$o.channel ber 0
+par SimpleNet.router1.pppg$o[0].channel ber 0
 attr mutable ""
-par SimpleNet.node2.ppp$o.channel per 0
+par SimpleNet.router1.pppg$o[0].channel per 0
 attr mutable ""
-par SimpleNet.router.pppg$o[1].channel typename "\"simple_dns_http.FastLink\""
-par SimpleNet.router.pppg$o[1].channel disabled false
+par SimpleNet.source.ppp$o[1].channel typename "\"simple_dns_http.Link\""
+par SimpleNet.source.ppp$o[1].channel disabled false
 attr mutable ""
-par SimpleNet.router.pppg$o[1].channel delay 0.0001s
+par SimpleNet.source.ppp$o[1].channel delay 0.001s
 attr mutable ""
 attr unit s
-par SimpleNet.router.pppg$o[1].channel datarate 1e+08bps
+par SimpleNet.source.ppp$o[1].channel datarate 1e+08bps
 attr mutable ""
 attr unit bps
-par SimpleNet.router.pppg$o[1].channel ber 0
+par SimpleNet.source.ppp$o[1].channel ber 0
 attr mutable ""
-par SimpleNet.router.pppg$o[1].channel per 0
+par SimpleNet.source.ppp$o[1].channel per 0
 attr mutable ""
-par SimpleNet.node3.ppp$o.channel typename "\"simple_dns_http.SlowLink\""
-par SimpleNet.node3.ppp$o.channel disabled false
+par SimpleNet.router2.pppg$o[0].channel typename "\"simple_dns_http.Link\""
+par SimpleNet.router2.pppg$o[0].channel disabled false
 attr mutable ""
-par SimpleNet.node3.ppp$o.channel delay 0.001s
+par SimpleNet.router2.pppg$o[0].channel delay 0.001s
 attr mutable ""
 attr unit s
-par SimpleNet.node3.ppp$o.channel datarate 1e+08bps
+par SimpleNet.router2.pppg$o[0].channel datarate 1e+08bps
 attr mutable ""
 attr unit bps
-par SimpleNet.node3.ppp$o.channel ber 0
+par SimpleNet.router2.pppg$o[0].channel ber 0
 attr mutable ""
-par SimpleNet.node3.ppp$o.channel per 0
+par SimpleNet.router2.pppg$o[0].channel per 0
 attr mutable ""
-par SimpleNet.router.pppg$o[2].channel typename "\"simple_dns_http.SlowLink\""
-par SimpleNet.router.pppg$o[2].channel disabled false
+par SimpleNet.source.ppp$o[2].channel typename "\"simple_dns_http.Link\""
+par SimpleNet.source.ppp$o[2].channel disabled false
 attr mutable ""
-par SimpleNet.router.pppg$o[2].channel delay 0.001s
+par SimpleNet.source.ppp$o[2].channel delay 0.001s
 attr mutable ""
 attr unit s
-par SimpleNet.router.pppg$o[2].channel datarate 1e+08bps
+par SimpleNet.source.ppp$o[2].channel datarate 1e+08bps
 attr mutable ""
 attr unit bps
-par SimpleNet.router.pppg$o[2].channel ber 0
+par SimpleNet.source.ppp$o[2].channel ber 0
 attr mutable ""
-par SimpleNet.router.pppg$o[2].channel per 0
+par SimpleNet.source.ppp$o[2].channel per 0
 attr mutable ""
-par SimpleNet.node4.ppp$o.channel typename "\"simple_dns_http.SlowLink\""
-par SimpleNet.node4.ppp$o.channel disabled false
+par SimpleNet.router3.pppg$o[0].channel typename "\"simple_dns_http.Link\""
+par SimpleNet.router3.pppg$o[0].channel disabled false
 attr mutable ""
-par SimpleNet.node4.ppp$o.channel delay 0.001s
+par SimpleNet.router3.pppg$o[0].channel delay 0.001s
 attr mutable ""
 attr unit s
-par SimpleNet.node4.ppp$o.channel datarate 1e+08bps
+par SimpleNet.router3.pppg$o[0].channel datarate 1e+08bps
 attr mutable ""
 attr unit bps
-par SimpleNet.node4.ppp$o.channel ber 0
+par SimpleNet.router3.pppg$o[0].channel ber 0
 attr mutable ""
-par SimpleNet.node4.ppp$o.channel per 0
+par SimpleNet.router3.pppg$o[0].channel per 0
 attr mutable ""
-par SimpleNet.router.pppg$o[3].channel typename "\"simple_dns_http.SlowLink\""
-par SimpleNet.router.pppg$o[3].channel disabled false
+par SimpleNet.router1.pppg$o[1].channel typename "\"simple_dns_http.FastPath\""
+par SimpleNet.router1.pppg$o[1].channel disabled false
 attr mutable ""
-par SimpleNet.router.pppg$o[3].channel delay 0.001s
+par SimpleNet.router1.pppg$o[1].channel delay 0.01s
 attr mutable ""
 attr unit s
-par SimpleNet.router.pppg$o[3].channel datarate 1e+08bps
+par SimpleNet.router1.pppg$o[1].channel datarate 1e+08bps
 attr mutable ""
 attr unit bps
-par SimpleNet.router.pppg$o[3].channel ber 0
+par SimpleNet.router1.pppg$o[1].channel ber 0
 attr mutable ""
-par SimpleNet.router.pppg$o[3].channel per 0
+par SimpleNet.router1.pppg$o[1].channel per 0
 attr mutable ""
-par SimpleNet.router typename "\"simple_dns_http.Router\""
-par SimpleNet.router routes "\"\""
-statistic SimpleNet.router qValue:stats
-field count 14
-field mean 0.144021484375
-field stddev 0.17221268324714
-field min 0.0041054687499995
-field max 0.5035
-field sum 2.01630078125
-field sqrsum 0.67593433898743
+par SimpleNet.destination.ppp$o[0].channel typename "\"simple_dns_http.FastPath\""
+par SimpleNet.destination.ppp$o[0].channel disabled false
+attr mutable ""
+par SimpleNet.destination.ppp$o[0].channel delay 0.01s
+attr mutable ""
+attr unit s
+par SimpleNet.destination.ppp$o[0].channel datarate 1e+08bps
+attr mutable ""
+attr unit bps
+par SimpleNet.destination.ppp$o[0].channel ber 0
+attr mutable ""
+par SimpleNet.destination.ppp$o[0].channel per 0
+attr mutable ""
+par SimpleNet.router2.pppg$o[1].channel typename "\"simple_dns_http.MediumPath\""
+par SimpleNet.router2.pppg$o[1].channel disabled false
+attr mutable ""
+par SimpleNet.router2.pppg$o[1].channel delay 0.05s
+attr mutable ""
+attr unit s
+par SimpleNet.router2.pppg$o[1].channel datarate 1e+08bps
+attr mutable ""
+attr unit bps
+par SimpleNet.router2.pppg$o[1].channel ber 0
+attr mutable ""
+par SimpleNet.router2.pppg$o[1].channel per 0
+attr mutable ""
+par SimpleNet.destination.ppp$o[1].channel typename "\"simple_dns_http.MediumPath\""
+par SimpleNet.destination.ppp$o[1].channel disabled false
+attr mutable ""
+par SimpleNet.destination.ppp$o[1].channel delay 0.05s
+attr mutable ""
+attr unit s
+par SimpleNet.destination.ppp$o[1].channel datarate 1e+08bps
+attr mutable ""
+attr unit bps
+par SimpleNet.destination.ppp$o[1].channel ber 0
+attr mutable ""
+par SimpleNet.destination.ppp$o[1].channel per 0
+attr mutable ""
+par SimpleNet.router3.pppg$o[1].channel typename "\"simple_dns_http.SlowPath\""
+par SimpleNet.router3.pppg$o[1].channel disabled false
+attr mutable ""
+par SimpleNet.router3.pppg$o[1].channel delay 0.1s
+attr mutable ""
+attr unit s
+par SimpleNet.router3.pppg$o[1].channel datarate 1e+08bps
+attr mutable ""
+attr unit bps
+par SimpleNet.router3.pppg$o[1].channel ber 0
+attr mutable ""
+par SimpleNet.router3.pppg$o[1].channel per 0
+attr mutable ""
+par SimpleNet.destination.ppp$o[2].channel typename "\"simple_dns_http.SlowPath\""
+par SimpleNet.destination.ppp$o[2].channel disabled false
+attr mutable ""
+par SimpleNet.destination.ppp$o[2].channel delay 0.1s
+attr mutable ""
+attr unit s
+par SimpleNet.destination.ppp$o[2].channel datarate 1e+08bps
+attr mutable ""
+attr unit bps
+par SimpleNet.destination.ppp$o[2].channel ber 0
+attr mutable ""
+par SimpleNet.destination.ppp$o[2].channel per 0
+attr mutable ""
+par SimpleNet.source typename "\"simple_dns_http.PC\""
+par SimpleNet.source address 1
+par SimpleNet.source destAddr 2
+par SimpleNet.source startTime 1s
+attr unit s
+par SimpleNet.source sendInterval 2s
+attr unit s
+par SimpleNet.source isSource true
+par SimpleNet.source isDestination false
+par SimpleNet.destination typename "\"simple_dns_http.PC\""
+par SimpleNet.destination address 2
+par SimpleNet.destination destAddr -1
+par SimpleNet.destination startTime 0.5s
+attr unit s
+par SimpleNet.destination sendInterval 1s
+attr unit s
+par SimpleNet.destination isSource false
+par SimpleNet.destination isDestination true
+par SimpleNet.router1 typename "\"simple_dns_http.Router\""
+par SimpleNet.router1 address 11
+par SimpleNet.router1 routes "\"\""
+statistic SimpleNet.router1 qValue:stats
+field count 44
+field mean 0.087249999999978
+field stddev 0.19218687913495
+field min 0.020000000000952
+field max 1.07075
+field sum 3.838999999999
+field sqrsum 1.923192
 attr interpolationmode none
 attr recordingmode stats
 attr title Q-values
-par SimpleNet.node1 typename "\"simple_dns_http.PC\""
-par SimpleNet.node1 address 1
-par SimpleNet.node1 destAddr 2
-par SimpleNet.node1 startTime 0.5s
-attr unit s
-par SimpleNet.node1 sendInterval 2s
-attr unit s
-par SimpleNet.node3 typename "\"simple_dns_http.PC\""
-par SimpleNet.node3 address 3
-par SimpleNet.node3 destAddr 4
-par SimpleNet.node3 startTime 1s
-attr unit s
-par SimpleNet.node3 sendInterval 2.5s
-attr unit s
-par SimpleNet.node2 typename "\"simple_dns_http.DNS\""
-par SimpleNet.node2 address 2
-par SimpleNet.node4 typename "\"simple_dns_http.HTTP\""
-par SimpleNet.node4 address 4
-par SimpleNet.node4 serviceTime 0.005s
-attr unit s
+par SimpleNet.router2 typename "\"simple_dns_http.Router\""
+par SimpleNet.router2 address 12
+par SimpleNet.router2 routes "\"\""
+statistic SimpleNet.router2 qValue:stats
+field count 3
+field mean 1.1665
+field stddev 0.5617755334651
+field min 0.55
+field max 1.6495
+field sum 3.4995
+field sqrsum 4.71335025
+attr interpolationmode none
+attr recordingmode stats
+attr title Q-values
+par SimpleNet.router3 typename "\"simple_dns_http.Router\""
+par SimpleNet.router3 address 13
+par SimpleNet.router3 routes "\"\""
+statistic SimpleNet.router3 qValue:stats
+field count 3
+field mean 0.5
+field stddev 0.1
+field min 0.4
+field max 0.6
+field sum 1.5
+field sqrsum 0.77
+attr interpolationmode none
+attr recordingmode stats
+attr title Q-values
 par SimpleNet typename "\"simple_dns_http.SimpleNet\""
 

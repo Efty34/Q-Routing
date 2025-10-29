@@ -1,29 +1,44 @@
 package simple_dns_http;
 
-// Fast channel - low delay
-channel FastLink extends ned.DatarateChannel
+// Fast path - lowest delay
+channel FastPath extends ned.DatarateChannel
 {
     datarate = 100Mbps;
-    delay = 0.1ms;
+    delay = 10ms;  // Fast router path
 }
 
-// Slow channel - higher delay
-channel SlowLink extends ned.DatarateChannel
+// Medium path - moderate delay
+channel MediumPath extends ned.DatarateChannel
 {
     datarate = 100Mbps;
-    delay = 1.0ms;
+    delay = 50ms;  // Medium router path
+}
+
+// Slow path - highest delay
+channel SlowPath extends ned.DatarateChannel
+{
+    datarate = 100Mbps;
+    delay = 100ms;  // Slow router path
+}
+
+// Connection links (minimal delay)
+channel Link extends ned.DatarateChannel
+{
+    datarate = 100Mbps;
+    delay = 1ms;
 }
 
 // Q-Learning Router
 simple Router
 {
     parameters:
-        string routes = default("");   // Not used in Q-routing (kept for compatibility)
+        int address = default(0);          // Router's own address
+        string routes = default("");       // Not used in Q-routing (kept for compatibility)
         @display("i=device/router");
         @signal[qValue](type=double);
         @statistic[qValue](title="Q-values"; record=vector,stats; interpolationmode=none);
     gates:
-        inout pppg[];                  // Variable-size gate array
+        inout pppg[];                      // Variable-size gate array
 }
 
 // Traffic Generator / Endpoint
@@ -31,12 +46,14 @@ simple PC
 {
     parameters:
         int address;                         // Node address
-        int destAddr = default(2);           // Destination to send packets to
+        int destAddr = default(-1);          // Destination to send packets to (-1 = no sending)
         double startTime @unit(s) = default(0.5s);     // When to start sending
         double sendInterval @unit(s) = default(1.0s);  // Interval between packets (0 = send once)
+        bool isSource = default(false);      // Is this the source node?
+        bool isDestination = default(false); // Is this the destination node?
         @display("i=device/laptop");
     gates:
-        inout ppp;
+        inout ppp[];  // Gate array to support multiple connections
 }
 
 // Simple Endpoint (formerly DNS)
@@ -61,65 +78,64 @@ simple HTTP
 }
 
 //
-// Network topology for Q-routing demonstration
-// Multiple paths between nodes - router learns which is faster
+// Multi-Router Q-Routing Network
+// 
+// Topology: Source → 3 Routers (3 different paths) → Destination
 //
-//     node1 ----fast---\                /---fast--- node2  
-//                       \              /
-//                        --> Router -->
-//                       /              \
-//     node3 ----slow---/                \---slow--- node4
+//                    ┌──► R1 (10ms - FAST) ────┐
+//                    │                          │
+//   Source (addr=1) ─┼──► R2 (50ms - MEDIUM) ──┼─→ Destination (addr=2)
+//                    │                          │
+//                    └──► R3 (100ms - SLOW) ────┘
 //
-// Router has multiple options and must learn optimal paths through Q-learning
+// Each router learns Q-values and discovers that R1 provides the fastest path
 //
 network SimpleNet
 {
     submodules:
-        // Central router with Q-learning
-        router: Router {
-            @display("p=400,250");
-        }
-        
-        // Traffic generators (will send to each other)
-        node1: PC {
+        // Source node - generates traffic
+        source: PC {
             address = 1;
-            destAddr = 2;           // Send to node2
-            startTime = 0.5s;
-            sendInterval = 2.0s;    // Send every 2 seconds
-            @display("p=150,150");
+            destAddr = 2;           // Send to destination
+            startTime = 1s;         // Start after initialization
+            sendInterval = 2s;      // Send packet every 2 seconds
+            isSource = true;
+            @display("p=100,200");
         }
         
-        node3: PC {
-            address = 3;
-            destAddr = 4;           // Send to node4
-            startTime = 1.0s;
-            sendInterval = 2.5s;    // Send every 2.5 seconds
-            @display("p=150,350");
-        }
-        
-        // Endpoints (respond to packets)
-        node2: DNS {
+        // Destination node - receives traffic
+        destination: PC {
             address = 2;
-            @display("p=650,150");
+            destAddr = -1;          // Doesn't send
+            isDestination = true;
+            @display("p=500,200");
         }
         
-        node4: HTTP {
-            address = 4;
-            serviceTime = 5ms;
-            @display("p=650,350");
+        // Three routers with different processing delays
+        router1: Router {
+            address = 11;           // Router 1 address
+            @display("p=300,100");
+        }
+        
+        router2: Router {
+            address = 12;           // Router 2 address
+            @display("p=300,200");
+        }
+        
+        router3: Router {
+            address = 13;           // Router 3 address
+            @display("p=300,300");
         }
         
     connections:
-        // node1 connected via FAST link (router will learn this is best path)
-        node1.ppp <--> FastLink <--> router.pppg++;
+        // Source connects to all 3 routers
+        source.ppp++ <--> Link <--> router1.pppg++;
+        source.ppp++ <--> Link <--> router2.pppg++;
+        source.ppp++ <--> Link <--> router3.pppg++;
         
-        // node2 connected via FAST link
-        node2.ppp <--> FastLink <--> router.pppg++;
-        
-        // node3 connected via SLOW link (router will learn this is slower)
-        node3.ppp <--> SlowLink <--> router.pppg++;
-        
-        // node4 connected via SLOW link
-        node4.ppp <--> SlowLink <--> router.pppg++;
+        // Each router has different delay to destination
+        router1.pppg++ <--> FastPath <--> destination.ppp++;     // 10ms - Best path
+        router2.pppg++ <--> MediumPath <--> destination.ppp++;   // 50ms - Medium path
+        router3.pppg++ <--> SlowPath <--> destination.ppp++;     // 100ms - Worst path
 }
 
