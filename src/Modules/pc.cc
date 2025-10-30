@@ -96,14 +96,22 @@ class PC : public cSimpleModule {
     }
     
     void updateQ(int gate, double measuredDelay) {
-        double oldQ = qTable[gate];
-        double newQ = oldQ + LEARNING_RATE * (measuredDelay - oldQ);
-        qTable[gate] = newQ;
-        
-        EV_INFO << "Source PC " << addr << " Q-update: gate=" << gate 
-                << " oldQ=" << oldQ << " newQ=" << newQ 
-                << " (RTT=" << measuredDelay << ")\n";
+    double oldQ = qTable[gate];
+    double newQ = oldQ + LEARNING_RATE * (measuredDelay - oldQ);
+    double error = fabs(newQ - measuredDelay); 
+    
+    qTable[gate] = newQ;
+    
+    EV_INFO << "Source PC " << addr << " Q-update: gate=" << gate 
+            << " oldQ=" << oldQ << " newQ=" << newQ 
+            << " (RTT=" << measuredDelay << ", error=" << error;
+    
+    // Check if converged (error < 5ms = 0.005s)
+    if (error < 0.005) {
+        EV_INFO << " CONVERGED";
     }
+    EV_INFO << ")\n";
+}
 
     void handleMessage(cMessage *msg) override {
         if (msg->isSelfMessage()) {
